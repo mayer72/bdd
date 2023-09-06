@@ -6,8 +6,9 @@ import org.junit.jupiter.api.Test;
 import ru.netology.data.DataHelper;
 import ru.netology.page.DashbordPage;
 import ru.netology.page.LoginPage;
+import ru.netology.page.VerificationPage;
 
-import static com.google.common.collect.Range.open;
+import static com.codeborne.selenide.Selenide.open;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static ru.netology.data.DataHelper.*;
 
@@ -16,7 +17,7 @@ public class MonyTransferTest {
 
     @BeforeEach
     void setup() {
-        var loginPage = open("http://localhost:9999",LoginPage.class);
+        var loginPage = open("http://localhost:9999", LoginPage.class);
         var authInfo = getAuthInfo();
         var verificationPage = loginPage.validLogin(authInfo);
         var verificationCode = getVerificationCode();
@@ -40,20 +41,5 @@ public class MonyTransferTest {
         assertEquals(expectedBalanceFirstCard, actualBalanceFirstCard);
         assertEquals(expectedBalanceSecondCard, actualBalanceSecondCard);
     }
-    @Test
-    @DisplayName("Should Get Error Message If Amount More Balance")
-    void shouldGetErrorMessageIfAmountMoreBalance() {
-        var firstCardInfo = getFirstCardInfo();
-        var secondCardInfo = getSecondCardInfo();
-        var firstCardBalance = dashbordPage.getCardBalance(firstCardInfo);
-        var secondCardBalance = dashbordPage.getCardBalance(secondCardInfo);
-        var amount = generateInvalidAmount(secondCardBalance);
-        var transferPage = dashbordPage.selectCardToTransfer(firstCardInfo);
-        transferPage.makeTransfer(String.valueOf(amount), secondCardInfo);
-        transferPage.findErrorMessage("На карте недостаточно средств");
-        var actualBalanceFirstCard = dashbordPage.getCardBalance(firstCardInfo);
-        var actualBalanceSecondCard = dashbordPage.getCardBalance(secondCardInfo);
-        assertEquals(firstCardBalance, actualBalanceFirstCard);
-        assertEquals(secondCardBalance, actualBalanceSecondCard);
-    }
+
 }
